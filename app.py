@@ -1,8 +1,6 @@
 import streamlit as st
 import time
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 
 # Sayfa Yapılandırması
 st.set_page_config(page_title="Green-FinAI Dashboard", page_icon="🌱", layout="wide")
@@ -42,7 +40,7 @@ if st.button("🚀 Run Dynamic Simulation & Calculate Footprint"):
 
     st.success("Simulation & Environmental Audit Complete!")
     
-    # Metrik Ayarları (Karmaşık Modele Göre)
+    # Metrik Ayarları
     multiplier = 1.0 if "Standard" in ai_complexity else (2.2 if "Deep" in ai_complexity else 4.5)
     water_used = int(180 * multiplier)
     power_used = round(0.035 * multiplier, 3)
@@ -56,36 +54,29 @@ if st.button("🚀 Run Dynamic Simulation & Calculate Footprint"):
 
     st.markdown("---")
 
-    # 2. BÖLÜM: GRAFİKLER (FINANSAL + ÇEVRESEL)
+    # 2. BÖLÜM: DİNAMİK GRAFİKLER (Streamlit Native)
     g_col1, g_col2 = st.columns(2)
 
     with g_col1:
-        st.subheader("📈 2025-2030 Cumulative Financial Performance ($M)")
-        years = [2025, 2026, 2027, 2028, 2029, 2030]
-        df_finance = pd.DataFrame({
-            "Year": years,
-            "Traditional / Pure AI": [10, 11.2, 12.8, 14.1, 15.5, 17.0],
-            "Green Tech / Hybrid AI": [10, 12.5, 15.8, 20.1, 25.4, 32.0]
-        })
-        fig_fin = px.line(
-            df_finance, x="Year", y=["Traditional / Pure AI", "Green Tech / Hybrid AI"],
-            markers=True, color_discrete_sequence=["#EF553B", "#00CC96"]
+        st.subheader("📈 2025-2030 Cumulative Financial Return ($M)")
+        df_finance = pd.DataFrame(
+            {
+                "Traditional / Pure AI": [10.0, 11.2, 12.8, 14.1, 15.5, 17.0],
+                "Green Tech / Hybrid AI": [10.0, 12.5, 15.8, 20.1, 25.4, 32.0]
+            },
+            index=[2025, 2026, 2027, 2028, 2029, 2030]
         )
-        fig_fin.update_layout(legend_title_text="Strategy", hovermode="x unified")
-        st.plotly_chart(fig_fin, use_container_width=True)
+        st.line_chart(df_finance)
 
     with g_col2:
-        st.subheader("💧 AI Resource Consumption Breakdown")
-        df_env = pd.DataFrame({
-            "Metric": ["Cooling Water (ml)", "Power Consumed (x100 Wh)", "Carbon Footprint (g CO2)"],
-            "Amount": [water_used, power_used * 100, co2_used]
-        })
-        fig_env = px.bar(
-            df_env, x="Metric", y="Amount", color="Metric",
-            color_discrete_sequence=["#636EFA", "#AB63FA", "#FFA15A"]
+        st.subheader("💧 Resource Footprint Scale")
+        df_env = pd.DataFrame(
+            {
+                "Environmental Impact": [water_used, power_used * 100, co2_used]
+            },
+            index=["Cooling Water (ml)", "Power (x100 Wh)", "Carbon (g CO2)"]
         )
-        fig_env.update_layout(showlegend=False)
-        st.plotly_chart(fig_env, use_container_width=True)
+        st.bar_chart(df_env)
 
     st.markdown("---")
 
@@ -104,3 +95,4 @@ if st.button("🚀 Run Dynamic Simulation & Calculate Footprint"):
 
 else:
     st.info("👈 Select parameters in the sidebar and click **Run Dynamic Simulation** to generate real-time financial & sustainability charts.")
+
